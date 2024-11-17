@@ -2,8 +2,6 @@ package main
 
 import (
 	"context"
-	"crypto/rand"
-	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"log"
@@ -17,14 +15,6 @@ import (
 type Identity struct {
 	UUID         string `json:"uuid"`
 	EmailAddress string `json:"email"`
-}
-
-func nonceGenerator(size int) (string, error) {
-	b := make([]byte, size)
-	if _, err := rand.Read(b); err != nil {
-		return "", err
-	}
-	return base64.URLEncoding.EncodeToString(b), nil
 }
 
 func main() {
@@ -50,16 +40,9 @@ func main() {
 		Scopes:       []string{oidc.ScopeOpenID, "email"}, // We could add "profile".
 	}
 
+	state := oauth2.GenerateVerifier()
+	nonce := oauth2.GenerateVerifier()
 	pkceSecret := oauth2.GenerateVerifier()
-
-	state, err := nonceGenerator(10)
-	if err != nil {
-		log.Fatal("couldn't generate random state", err)
-	}
-	nonce, err := nonceGenerator(10)
-	if err != nil {
-		log.Fatal("couldn't generate random nonce", err)
-	}
 
 	url := conf.AuthCodeURL(state, oidc.Nonce(nonce), oauth2.S256ChallengeOption(pkceSecret))
 	log.Printf("Visit\n\n\t%s\n\nto authenticate\n", url)
