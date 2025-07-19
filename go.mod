@@ -4,7 +4,7 @@ go 1.23.3
 
 require (
 	github.com/coreos/go-oidc/v3 v3.11.0
-	golang.org/x/oauth2 v0.21.0
+	golang.org/x/oauth2 v0.27.0
 )
 
 require (
